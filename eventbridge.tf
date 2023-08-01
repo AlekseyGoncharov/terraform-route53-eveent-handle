@@ -18,6 +18,8 @@ resource "aws_cloudwatch_event_rule" "route53-events" {
       ]
     }
   })
+
+  tags = var.tags
 }
 
 resource "aws_cloudwatch_event_target" "sqs" {

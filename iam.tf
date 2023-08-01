@@ -43,9 +43,9 @@ resource "aws_iam_policy" "sqs_lambda_policy" {
     Statement = [
       {
         Action = [
-                "sqs:DeleteMessage",
-                "sqs:ReceiveMessage",
-                "sqs:GetQueueAttributes"
+          "sqs:DeleteMessage",
+          "sqs:ReceiveMessage",
+          "sqs:GetQueueAttributes"
         ]
         Effect   = "Allow"
         Resource = "*"
@@ -54,10 +54,11 @@ resource "aws_iam_policy" "sqs_lambda_policy" {
   })
 }
 
-resource aws_iam_role lambda_role {
+resource "aws_iam_role" "lambda_role" {
   name = "lambda_role"
 
-  assume_role_policy = data.aws_iam_policy_document.lambda-assume-role-policy.json
+  assume_role_policy  = data.aws_iam_policy_document.lambda-assume-role-policy.json
   managed_policy_arns = [aws_iam_policy.cloudwatch_write_policy.arn, aws_iam_policy.sqs_lambda_policy.arn]
 
+  tags = var.tags
 }

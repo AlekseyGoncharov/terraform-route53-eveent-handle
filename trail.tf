@@ -3,17 +3,13 @@ resource "aws_cloudtrail" "events-trail" {
   s3_bucket_name                = aws_s3_bucket.cloudtrail_s3_bucket.id
   s3_key_prefix                 = "prefix"
   include_global_service_events = false
-  tags = {
-    "Env": "security"
-  }
+  tags                          = var.tags
 }
 
 resource "aws_s3_bucket" "cloudtrail_s3_bucket" {
   bucket        = "events-trail"
   force_destroy = true
-  tags = {
-    "Env": "security"
-  }
+  tags          = var.tags
 }
 
 data "aws_iam_policy_document" "cloudtrail_policy" {
@@ -59,7 +55,8 @@ data "aws_iam_policy_document" "cloudtrail_policy" {
     }
   }
 }
-resource "aws_s3_bucket_policy" "example" {
+
+resource "aws_s3_bucket_policy" "cloudtrail_s3" {
   bucket = aws_s3_bucket.cloudtrail_s3_bucket.id
   policy = data.aws_iam_policy_document.cloudtrail_policy.json
 }

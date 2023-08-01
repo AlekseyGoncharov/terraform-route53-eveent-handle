@@ -1,10 +1,7 @@
 resource "aws_cloudwatch_log_group" "route53-events" {
   name = "Route53-events"
 
-  tags = {
-    Environment = "production"
-    Application = "serviceA"
-  }
+  tags = var.tags
 }
 
 resource "aws_cloudwatch_log_stream" "route53-events-lambda" {

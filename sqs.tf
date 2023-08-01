@@ -1,9 +1,7 @@
 resource "aws_sqs_queue" "route53-events-queue" {
   name                    = "route53-events-queue"
   sqs_managed_sse_enabled = true
-  tags = {
-    "Env": "security"
-  }
+  tags                    = var.tags
 }
 
 
