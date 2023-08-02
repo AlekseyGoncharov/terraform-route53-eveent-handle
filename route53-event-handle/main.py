@@ -8,8 +8,7 @@ def lambda_handler(event, context):
     logger.setLevel(logging.DEBUG)
 
     client = boto3.client("logs")
-    stamp = int((datetime.now()).strftime("%Y%m%d%H%M%S")) * 1000
-    logger.debug(stamp)
+
     if event.get("Records"):
         for record in event["Records"]:
             data = json.loads(record["body"])

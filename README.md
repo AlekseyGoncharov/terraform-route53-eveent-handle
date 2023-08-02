@@ -19,7 +19,9 @@ and put it to specific cloudwatch log stream
 
 ### variables
 `tags` - tags which will be added to resources
+
 `log_group` - log group which will be created for these events
+
 `log_stream` - log stream inside log group
 
 ### resources
