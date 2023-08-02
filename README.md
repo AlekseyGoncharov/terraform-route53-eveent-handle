@@ -24,8 +24,13 @@ and put it to specific cloudwatch log stream
 
 ### resources
 `iam` - iam for lambda(sqs and cloudwatch logs)
+
 `cloudtrail` - trail for events, without this one rule doesn't work, if you have this one already you can remove file
+
 `cloudwatch-logs` - log group and stream for logs, if you want to uses your own, just remove/rename file
+
 `eventbridge` - rule for route53 events and target
+
 `sqs` - sqs queue for events
+
 `lambda` - lambda function
