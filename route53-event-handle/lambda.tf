@@ -2,8 +2,8 @@ data "archive_file" "lambda" {
   type = "zip"
   source {
     content = templatefile("main.py", {
-      LOG_GROUP  = aws_cloudwatch_log_group.route53-events.name
-      LOG_STREAM = aws_cloudwatch_log_stream.route53-events-lambda.name
+      LOG_GROUP  = var.log_group_name
+      LOG_STREAM = var.log_stream_name
     })
     filename = "main-rendered.py"
   }
