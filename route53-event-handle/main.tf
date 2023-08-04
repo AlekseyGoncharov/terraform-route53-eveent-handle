@@ -7,10 +7,12 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-east-1"
+  region     = "us-east-1"
   default_tags {
-    env        = "security"
-    managed_by = "terraform"
-    purpose    = "route53 events"
+    tags = {
+      env        = "security"
+      managed_by = "terraform"
+      purpose    = "route53 events"
+    }
   }
 }

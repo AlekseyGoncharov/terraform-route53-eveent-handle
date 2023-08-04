@@ -1,15 +1,19 @@
 resource "aws_cloudtrail" "events-trail" {
   name                          = "events-trail"
-  s3_bucket_name                = aws_s3_bucket.cloudtrail_s3_bucket.id
+  s3_bucket_name                = module.s3_bucket.s3_bucket_id
   s3_key_prefix                 = "prefix"
   include_global_service_events = false
-  tags                          = var.tags
 }
 
-resource "aws_s3_bucket" "cloudtrail_s3_bucket" {
-  bucket        = "events-trail"
+
+module "s3_bucket" {
+  source        = "terraform-aws-modules/s3-bucket/aws"
+  version       = "= 3.14.1"
   force_destroy = true
-  tags          = var.tags
+  bucket        = "events-trail"
+
+  attach_policy = true
+  policy        = data.aws_iam_policy_document.cloudtrail_policy.json
 }
 
 data "aws_iam_policy_document" "cloudtrail_policy" {
@@ -23,7 +27,7 @@ data "aws_iam_policy_document" "cloudtrail_policy" {
     }
 
     actions   = ["s3:GetBucketAcl"]
-    resources = [aws_s3_bucket.cloudtrail_s3_bucket.arn]
+    resources = [module.s3_bucket.s3_bucket_arn]
     condition {
       test     = "StringEquals"
       variable = "aws:SourceArn"
@@ -41,7 +45,7 @@ data "aws_iam_policy_document" "cloudtrail_policy" {
     }
 
     actions   = ["s3:PutObject"]
-    resources = ["${aws_s3_bucket.cloudtrail_s3_bucket.arn}/prefix/AWSLogs/${data.aws_caller_identity.current.account_id}/*"]
+    resources = ["${module.s3_bucket.s3_bucket_arn}/prefix/AWSLogs/${data.aws_caller_identity.current.account_id}/*"]
 
     condition {
       test     = "StringEquals"
@@ -54,11 +58,6 @@ data "aws_iam_policy_document" "cloudtrail_policy" {
       values   = ["arn:${data.aws_partition.current.partition}:cloudtrail:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:trail/events-trail"]
     }
   }
-}
-
-resource "aws_s3_bucket_policy" "cloudtrail_s3" {
-  bucket = aws_s3_bucket.cloudtrail_s3_bucket.id
-  policy = data.aws_iam_policy_document.cloudtrail_policy.json
 }
 
 data "aws_caller_identity" "current" {}

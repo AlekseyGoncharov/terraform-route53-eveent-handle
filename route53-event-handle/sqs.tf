@@ -8,7 +8,7 @@ module "sqs" {
     # default is 5 for this module
     maxReceiveCount = 10
   }
-
+  create_queue_policy = true
   queue_policy_statements = {
     eventbridge_rule = {
       sid     = "EventBridgeRulePush"
@@ -17,14 +17,14 @@ module "sqs" {
       principals = [
         {
           type        = "Service"
-          identifiers = ["sns.amazonaws.com"]
+          identifiers = ["events.amazonaws.com"]
         }
       ]
 
       conditions = [{
         test     = "ArnEquals"
         variable = "aws:SourceArn"
-        values   = [module.eventbridge.arn]
+        values   = [module.eventbridge.eventbridge_rule_arns.logs]
       }]
     },
     lambda_rule = {
@@ -41,7 +41,7 @@ module "sqs" {
       conditions = [{
         test     = "ArnEquals"
         variable = "aws:SourceArn"
-        values   = [module.eventbridge.arn]
+        values   = [module.lambda_function.lambda_function_arn]
       }]
     }
   }

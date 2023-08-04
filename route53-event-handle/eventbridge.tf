@@ -1,14 +1,17 @@
 module "eventbridge" {
-  source = "terraform-aws-modules/eventbridge/aws"
+  source  = "terraform-aws-modules/eventbridge/aws"
+  version = "= 2.3.0"
 
   targets = {
     logs = [
       {
         name = "send-logs-to-sqs"
-        arn  = aws_sqs_queue.queue.arn
+        arn  = module.sqs.queue_arn
       }
     ]
   }
+  create_bus = false
+
   rules = {
     logs = {
       description = "Capture ChangeResourceRecordSets in route53"
