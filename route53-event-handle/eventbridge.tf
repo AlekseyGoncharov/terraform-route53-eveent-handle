@@ -1,29 +1,33 @@
-resource "aws_cloudwatch_event_rule" "route53-events" {
-  name        = "route53-events"
-  description = "Capture ChangeResourceRecordSets in route53"
+module "eventbridge" {
+  source = "terraform-aws-modules/eventbridge/aws"
 
-  event_pattern = jsonencode({
-    source = [
-      "aws.route53"
+  targets = {
+    logs = [
+      {
+        name = "send-logs-to-sqs"
+        arn  = aws_sqs_queue.queue.arn
+      }
     ]
-    "detail-type" = [
-      "AWS API Call via CloudTrail"
-    ]
-    "detail" = {
-      "eventSource" = [
-        "route53.amazonaws.com"
-      ]
-      "eventName" = [
-        "ChangeResourceRecordSets"
-      ]
+  }
+  rules = {
+    logs = {
+      description = "Capture ChangeResourceRecordSets in route53"
+      event_pattern = jsonencode({
+        source = [
+          "aws.route53"
+        ]
+        "detail-type" = [
+          "AWS API Call via CloudTrail"
+        ]
+        "detail" = {
+          "eventSource" = [
+            "route53.amazonaws.com"
+          ]
+          "eventName" = [
+            "ChangeResourceRecordSets"
+          ]
+        }
+      })
     }
-  })
-
-  tags = var.tags
-}
-
-resource "aws_cloudwatch_event_target" "sqs" {
-  rule      = aws_cloudwatch_event_rule.route53-events.name
-  target_id = "SendToSQS"
-  arn       = aws_sqs_queue.route53-events-queue.arn
+  }
 }

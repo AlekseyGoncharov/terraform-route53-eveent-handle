@@ -4,9 +4,13 @@ terraform {
       source = "hashicorp/aws"
     }
   }
-
 }
 
 provider "aws" {
   region = "us-east-1"
+  default_tags {
+    env        = "security"
+    managed_by = "terraform"
+    purpose    = "route53 events"
+  }
 }

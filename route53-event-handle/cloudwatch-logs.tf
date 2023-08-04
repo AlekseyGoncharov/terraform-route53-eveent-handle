@@ -1,10 +1,12 @@
-resource "aws_cloudwatch_log_group" "route53-events" {
-  name = var.log_group_name
-
-  tags = var.tags
+module "log_group" {
+  source  = "terraform-aws-modules/cloudwatch/aws//modules/log-group"
+  version = "= 4.3.0"
+  name    = "my-app"
 }
 
-resource "aws_cloudwatch_log_stream" "route53-events-lambda" {
+module "log_stream" {
+  source         = "terraform-aws-modules/cloudwatch/aws//modules/log-stream"
+  version        = "= 4.3.0"
   name           = var.log_stream_name
-  log_group_name = aws_cloudwatch_log_group.route53-events.name
+  log_group_name = module.log_group.name
 }
